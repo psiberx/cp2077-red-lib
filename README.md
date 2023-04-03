@@ -1,8 +1,10 @@
 # Red Lib
 
+Header-only library to help create [RED4ext](https://github.com/WopsS/RED4ext.SDK) plugins.
+
 ## Building type info
 
-### Defining functions
+### Global functions
 
 ```cpp
 int32_t GetCharCode(std::string_view str, Red::Optional<int32_t> pos)
@@ -52,7 +54,7 @@ public static func TestGlobals() {
 }
 ```
 
-### Defining enums
+### Enum definitions
 
 ```cpp
 enum class MyEnum
@@ -87,7 +89,7 @@ enum MyFlags {
 }
 ```
 
-### Defining classes
+### Class definitions
 
 #### Structs
 
@@ -256,7 +258,7 @@ public class MySystem extends ScriptableSystem {
   private persistent let data: MyData;
     
   private func OnAttach() {
-    this.data.first += 1; // Will be added to a save file and restored on load
+    this.data.first += 1l; // Will be added to a save file and restored on load
     this.data.second += 1; // Will reset on every load
 
     LogChannel(n"DEBUG", s"MyData: \(this.data.first) / \(this.data.second)");
@@ -343,7 +345,7 @@ public native struct Foo {
 }
 ```
 
-### Extending classes
+### Class extensions
 
 You can add methods to already defined classed.
 
@@ -382,7 +384,8 @@ Properties cannot be added to existing classes.
 ```cpp
 struct RawExample : RED4ext::IScriptable
 {
-    inline static void Add(RawExample* self, RED4ext::CStackFrame* frame, int32_t* out, RED4ext::CBaseRTTIType*)
+    inline static void Add(RawExample* self, RED4ext::CStackFrame* frame, 
+                           int32_t* out, RED4ext::CBaseRTTIType*)
     {
         int32_t a;
         int32_t b;
@@ -396,7 +399,8 @@ struct RawExample : RED4ext::IScriptable
             *out = a + b;
         }
         
-        // If this method was called from scripts there will be information about caller in the stack frame
+        // If this function was called from scripts, 
+        // then stak frame should contain the caller
         if (frame->func)
         {
             self->caller = frame->func->shortName;
@@ -455,7 +459,6 @@ struct RawExample : RED4ext::IScriptable
 ### Registration
 
 To register your definitions you have to call `TypeInfoRegistrar::RegisterDiscovered()`.
-You can do it from `Main` procedure.
 
 ```cpp
 RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::EMainReason aReason,
@@ -475,15 +478,21 @@ RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::
 At compile time you can convert any C++ type to a corresponding RTTI type name:
 
 ```cpp
-constexpr auto a = Red::GetTypeName<uint64_t>(); // CName("Uint64")
-constexpr auto b = Red::GetTypeName<RED4ext::CString>(); // CName("String")
-constexpr auto c = Red::GetTypeName<RED4ext::DynArray<RED4ext::Handle<MyClass>>>(); // CName("array:handle:MyClass")
+// CName("Uint64")
+constexpr auto name = Red::GetTypeName<uint64_t>();
+
+// CName("String")
+constexpr auto name = Red::GetTypeName<RED4ext::CString>();
+
+// CName("array:handle:MyClass")
+constexpr auto name = Red::GetTypeName<RED4ext::DynArray<RED4ext::Handle<MyClass>>>();
 ```
 
 If you need string instead of `CName`:
 
 ```cpp
-constexpr auto s = Red::GetTypeNameStr<RED4ext::CString>(); // std::array<char, 7> = "String\0"
+// std::array<char, 7> = "String\0"
+constexpr auto name = Red::GetTypeNameStr<RED4ext::CString>();
 ```
 
 At runtime you can get `CBaseRTTIType` and `CClass`:
@@ -511,9 +520,14 @@ RED4ext::ScriptGameInstance game;
 RED4ext::Handle<RED4ext::PlayerSystem> system;
 RED4ext::Handle<RED4ext::GameObject> player;
 
-Red::CallStatic("ScriptGameInstance", "GetPlayerSystem", system, game); // system = GameInstance.GetPlayerSystem(game)
-Red::CallVirtual(system, "GetLocalPlayerControlledGameObject", player); // player = system.GetLocalPlayerControlledGameObject()
-Red::CallVirtual(player, "Revive", 100.0f); // player.Revive(100.0)
+// system = GameInstance.GetPlayerSystem(game)
+Red::CallStatic("ScriptGameInstance", "GetPlayerSystem", system, game);
+
+// player = system.GetLocalPlayerControlledGameObject()
+Red::CallVirtual(system, "GetLocalPlayerControlledGameObject", player);
+
+// player.Revive(100.0)
+Red::CallVirtual(player, "Revive", 100.0f);
 ```
 
 ## Accessing game systems
