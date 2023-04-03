@@ -311,7 +311,7 @@ public static native func GetMyGameSystem() -> ref<MyGameSystem>
 ```
 
 ```swift
-public static func TestSystem() {
+public static func TestGameSystem() {
   let system = GameInstance.GetMyGameSystem();
   
   LogChannel(n"DEBUG", s"Attached = \(system.IsAttached())");
@@ -320,7 +320,7 @@ public static func TestSystem() {
 
 ### Alternative naming
 
-You can use different names RTTI definitions instead of original C++ identifiers: 
+You can use other names for RTTI definitions instead of the original C++ identifiers: 
 
 ```cpp
 RTTI_DEFINE_ENUM(MyEnum, "Xyzzy");
@@ -347,7 +347,7 @@ public native struct Foo {
 
 ### Class extensions
 
-You can add methods to already defined classed.
+You can add methods to already defined classes.
 
 ```cpp
 struct MyExtension : RED4ext::GameObject
@@ -369,7 +369,7 @@ public native func AddTag(tag: CName)
 ```
 
 ```swift
-public static func TestExpansion(game: GameInstance) {
+public static func TestExtension(game: GameInstance) {
   let player = GetPlayer(game);
   LogChannel(n"DEBUG", s"HasTag = \(player.HasTag(n"Test"))");
     
