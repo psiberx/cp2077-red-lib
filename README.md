@@ -285,7 +285,7 @@ private:
         attached = true;
     }
 
-    void OnWorldDetached(RED4ext::world::RuntimeScene* Scene) override
+    void OnWorldDetached(RED4ext::world::RuntimeScene* scene) override
     {
         attached = false;
     }
