@@ -1,8 +1,8 @@
 # Red Lib
 
-## Building Type Info
+## Building type info
 
-### Defining Functions
+### Defining functions
 
 ```cpp
 int32_t GetCharCode(std::string_view str, Red::Optional<int32_t> pos)
@@ -52,7 +52,7 @@ public static func TestGlobals() {
 }
 ```
 
-### Defining Enums
+### Defining enums
 
 ```cpp
 enum class MyEnum
@@ -87,7 +87,7 @@ enum MyFlags {
 }
 ```
 
-### Defining Classes
+### Defining classes
 
 #### Structs
 
@@ -264,7 +264,7 @@ public class MySystem extends ScriptableSystem {
 }
 ```
 
-#### Game Systems
+#### Game systems
 
 When you define `IGameSystem` class, it will be automatically registered in game instance.
 
@@ -316,7 +316,7 @@ public static func TestSystem() {
 }
 ```
 
-### Alternative Naming
+### Alternative naming
 
 You can use different names RTTI definitions instead of original C++ identifiers: 
 
@@ -343,7 +343,7 @@ public native struct Foo {
 }
 ```
 
-### Extending Classes
+### Extending classes
 
 You can add methods to already defined classed.
 
@@ -377,7 +377,7 @@ public static func TestExpansion(game: GameInstance) {
 
 Properties cannot be added to existing classes.
 
-### Raw Native Handlers
+### Raw native handlers
 
 ```cpp
 struct RawExample : RED4ext::IScriptable
@@ -470,7 +470,7 @@ RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::
 }
 ```
 
-## Accessing Type Info
+## Accessing type info
 
 At compile time you can convert any C++ type to a corresponding RTTI type name:
 
@@ -494,14 +494,7 @@ auto enumArrayType = Red::GetType<RED4ext::DynArray<MyEnum>>();
 auto entityClass = Red::GetClass<RED4ext::Entity>();
 ```
 
-## Accessing Systems
-
-```cpp
-auto system = Red::GetGameSystem<RED4ext::IPersistencySystem>();
-auto status = system->GetEntityStatus(1ULL);
-```
-
-## Calling Functions
+## Calling functions
 
 ```cpp
 float a = 13, b = 78, max;
@@ -523,7 +516,14 @@ Red::CallVirtual(system, "GetLocalPlayerControlledGameObject", player); // playe
 Red::CallVirtual(player, "Revive", 100.0f); // player.Revive(100.0)
 ```
 
-## Game Log
+## Accessing game systems
+
+```cpp
+auto system = Red::GetGameSystem<RED4ext::IPersistencySystem>();
+auto status = system->GetEntityStatus(1ULL);
+```
+
+## Printing to game log
 
 ```cpp
 const auto projectName = "MyProject";
@@ -543,4 +543,6 @@ target_link_libraries(Project PRIVATE RedLib)
 #include <RedLib.hpp>
 ```
 
-see codeware
+## Examples
+
+- [Codeware](https://github.com/psiberx/cp2077-codeware)
