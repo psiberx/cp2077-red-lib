@@ -238,7 +238,7 @@ public native class C extends B {}
 ```cpp
 struct MyData
 {
-    int64_t first;
+    int32_t first;
     int32_t second;
 };
 
@@ -250,7 +250,7 @@ RTTI_DEFINE_CLASS(MyData, {
 
 ```swift
 public native struct MyData {
-  native persistent let first: Int64;
+  native persistent let first: Int32;
   native let second: Int32;
 }
 
@@ -258,7 +258,7 @@ public class MySystem extends ScriptableSystem {
   private persistent let data: MyData;
     
   private func OnAttach() {
-    this.data.first += 1l; // Will be added to a save file and restored on load
+    this.data.first += 1; // Will be added to a save file and restored on load
     this.data.second += 1; // Will reset on every load
 
     LogChannel(n"DEBUG", s"MyData: \(this.data.first) / \(this.data.second)");
@@ -371,9 +371,10 @@ public native func AddTag(tag: CName)
 ```swift
 public static func TestExpansion(game: GameInstance) {
   let player = GetPlayer(game);
-  LogChannel(n"DEBUG", s"Tagged = \(player.HasTag(n"Test"))");
+  LogChannel(n"DEBUG", s"HasTag = \(player.HasTag(n"Test"))");
+    
   player.AddTag(n"Test");
-  LogChannel(n"DEBUG", s"Tagged = \(player.HasTag(n"Test"))");
+  LogChannel(n"DEBUG", s"HasTag = \(player.HasTag(n"Test"))");
 }
 ```
 
