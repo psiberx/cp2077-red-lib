@@ -486,16 +486,12 @@ constexpr auto name = Red::GetTypeName<RED4ext::CString>();
 
 // CName("array:handle:MyClass")
 constexpr auto name = Red::GetTypeName<RED4ext::DynArray<RED4ext::Handle<MyClass>>>();
-```
 
-If you need string instead of `CName`:
-
-```cpp
 // std::array<char, 7> = "String\0"
 constexpr auto name = Red::GetTypeNameStr<RED4ext::CString>();
 ```
 
-At runtime you can get `CBaseRTTIType` and `CClass`:
+At runtime you can get `CBaseRTTIType` and `CClass` based on C++ types:
 
 ```cpp
 auto stringType = Red::GetType<RED4ext::CString>();
