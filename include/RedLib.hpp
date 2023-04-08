@@ -16,10 +16,11 @@
 #include <RED4ext/Scripting/Natives/ScriptGameInstance.hpp>
 #include <RED4ext/Scripting/Natives/Generated/game/IGameSystem.hpp>
 
-#include <nameof.hpp>
+#include <nameof/nameof.hpp>
 
 #include "Red/Alias.hpp"
 #include "Red/Framework.hpp"
 #include "Red/LogChannel.hpp"
 #include "Red/TypeInfo.hpp"
 #include "Red/Specializations.hpp"
+#include "Red/Utils.hpp"
