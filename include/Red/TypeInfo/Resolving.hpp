@@ -415,6 +415,45 @@ inline CClass* ResolveClass()
     return CRTTISystem::Get()->GetClass(s_name);
 }
 
+inline bool IsCompatible(CBaseRTTIType* aLhsType, CBaseRTTIType* aRhsType)
+{
+    if (aLhsType != aRhsType)
+    {
+        auto metaType = aLhsType->GetType();
+
+        if (metaType == aRhsType->GetType() && (metaType == ERTTIType::Handle || metaType == ERTTIType::WeakHandle))
+        {
+            auto lhsSubType = reinterpret_cast<CClass*>(reinterpret_cast<CRTTIHandleType*>(aLhsType)->innerType);
+            auto rhsSubType = reinterpret_cast<CClass*>(reinterpret_cast<CRTTIHandleType*>(aRhsType)->innerType);
+
+            return rhsSubType->IsA(lhsSubType);
+        }
+    }
+
+    return true;
+}
+
+inline bool IsCompatible(CBaseRTTIType* aLhsType, CBaseRTTIType* aRhsType, void* aRhsValue)
+{
+    if (aLhsType != aRhsType)
+    {
+        auto metaType = aLhsType->GetType();
+
+        if (metaType == aRhsType->GetType() && (metaType == ERTTIType::Handle || metaType == ERTTIType::WeakHandle))
+        {
+            auto lhsSubType = reinterpret_cast<CClass*>(reinterpret_cast<CRTTIHandleType*>(aLhsType)->innerType);
+            auto rhsInstance = aRhsValue ? reinterpret_cast<Handle<ISerializable>*>(aRhsValue)->instance : nullptr;
+            auto rhsSubType = rhsInstance
+                                  ? rhsInstance->GetType()
+                                  : reinterpret_cast<CClass*>(reinterpret_cast<CRTTIHandleType*>(aRhsType)->innerType);
+
+            return rhsSubType->IsA(lhsSubType);
+        }
+    }
+
+    return true;
+}
+
 RTTI_TYPE_NAME(int8_t, "Int8");
 RTTI_TYPE_NAME(uint8_t, "Uint8");
 RTTI_TYPE_NAME(int16_t, "Int16");
@@ -439,4 +478,6 @@ RTTI_TYPE_PREFIX(WeakHandle, "whandle:");
 RTTI_TYPE_PREFIX(ScriptRef, "script_ref:");
 RTTI_TYPE_PREFIX(ResourceReference, "rRef:");
 RTTI_TYPE_PREFIX(ResourceAsyncReference, "raRef:");
+
+RTTI_TYPE_NAME(char, "Uint8");
 }
