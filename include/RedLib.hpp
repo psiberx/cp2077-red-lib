@@ -15,6 +15,7 @@
 #include <RED4ext/RTTISystem.hpp>
 #include <RED4ext/Scripting/Natives/ScriptGameInstance.hpp>
 #include <RED4ext/Scripting/Natives/Generated/game/IGameSystem.hpp>
+#include <RED4ext/Scripting/Natives/Generated/game/ScriptableSystem.hpp>
 
 #include <nameof/nameof.hpp>
 
