@@ -353,6 +353,12 @@ RTTI_DEFINE_CLASS(MyScriptableSystem, {
 })
 ```
 
+#### Incomplete classes
+
+Using `RTTI_FWD_CONSTRUCTOR()` as in the previous example, 
+you can inherit partially dedcoded classes,
+and delefate construction and destruction to RTTI system. 
+
 ### Alternative naming
 
 You can use other names for RTTI definitions instead of the original C++ identifiers: 
