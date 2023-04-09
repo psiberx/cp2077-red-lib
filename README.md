@@ -318,6 +318,40 @@ public static func TestGameSystem() {
 }
 ```
 
+### Scripted classes
+
+In some cases game expects scripted classes and/or functions, and rejects native members.
+You can create scripted members backed by native code.
+In particular, it allows you to create scriptable systems.
+
+```cpp
+struct MyScriptableSystem : Red::ScriptableSystem
+{
+    void OnAttach()
+    {
+        Red::Log::Debug("Attached");
+    }
+
+    void OnDetach()
+    {
+        Red::Log::Debug("Detached");
+    }
+
+    void OnRestored(int32_t saveVersion, int32_t gameVersion)
+    {
+        Red::Log::Debug("Restored");
+    }
+
+    RTTI_IMPL_TYPEINFO(MyScriptableSystem);
+};
+
+RTTI_DEFINE_CLASS(MyScriptableSystem, {
+    RTTI_SCRIPT_METHOD(OnAttach);
+    RTTI_SCRIPT_METHOD(OnDetach);
+    RTTI_SCRIPT_METHOD(OnRestored);
+})
+```
+
 ### Alternative naming
 
 You can use other names for RTTI definitions instead of the original C++ identifiers: 
