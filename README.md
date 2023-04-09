@@ -325,7 +325,7 @@ You can create scripted members backed by native code.
 In particular, it allows you to create scriptable systems.
 
 ```cpp
-struct MyScriptableSystem : Red::ScriptableSystem
+struct MyScriptableSystem : RED4ext::ScriptableSystem
 {
     void OnAttach()
     {
