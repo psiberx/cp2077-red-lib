@@ -583,7 +583,7 @@ public:
 
         Memory::RTTIFunctionAllocator allocator;
         auto scriptFunc = allocator.Alloc<CClassFunction>();
-        std::memcpy(scriptFunc, nativeFunc, sizeof(CClassFunction));
+        std::memcpy(scriptFunc, nativeFunc, sizeof(CClassFunction)); // NOLINT(bugprone-undefined-memory-manipulation)
 
         auto fullName = Detail::MakeScriptFunctionName(scriptFunc, aName);
         scriptFunc->shortName = CNamePool::Add(aName);

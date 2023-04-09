@@ -343,6 +343,7 @@ struct MyScriptableSystem : RED4ext::ScriptableSystem
     }
 
     RTTI_IMPL_TYPEINFO(MyScriptableSystem);
+    RTTI_FWD_CONSTRUCTOR();
 };
 
 RTTI_DEFINE_CLASS(MyScriptableSystem, {
