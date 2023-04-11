@@ -350,14 +350,14 @@ RTTI_DEFINE_CLASS(MyScriptableSystem, {
     RTTI_SCRIPT_METHOD(OnAttach);
     RTTI_SCRIPT_METHOD(OnDetach);
     RTTI_SCRIPT_METHOD(OnRestored);
-})
+});
 ```
 
 #### Incomplete classes
 
 Using `RTTI_FWD_CONSTRUCTOR()` as in the previous example, 
 you can inherit partially dedcoded classes,
-and delefate construction and destruction to RTTI system. 
+and delegate construction and destruction to RTTI system. 
 
 ### Alternative naming
 
