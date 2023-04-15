@@ -7,12 +7,25 @@ Header-only library to help create [RED4ext](https://github.com/WopsS/RED4ext.SD
 ### Global functions
 
 ```cpp
-int32_t GetCharCode(std::string_view str, Red::Optional<int32_t> pos)
+int32_t GetCharCode(Red::ScriptRef<Red::CString>& str, Red::Optional<int32_t> pos)
 {
-    return pos >= 0 && pos < str.size() ? str[pos] : -1;
+    return pos >= 0 && pos < str->Length() ? str[pos] : -1;
 }
 
-void SortArray(RED4ext::ScriptRef<RED4ext::DynArray<int32_t>>& array)
+Red::DynArray<int32_t> MakeRandomArray(int32_t n)
+{
+    Red::DynArray<int32_t> array;
+    array.Reserve(n);
+
+    while (--n >= 0)
+    {
+        array.PushBack(std::rand());
+    }
+
+    return array;
+}
+
+void SortArray(Red::ScriptRef<Red::DynArray<int32_t>>& array)
 {
     std::sort(array.ref->begin(), array.ref->end());
 }
@@ -21,16 +34,11 @@ void Swap(int32_t* a, int32_t* b)
 {
     std::swap(*a, *b);
 }
-
-RTTI_DEFINE_GLOBALS({
-    RTTI_FUNCTION(GetCharCode);
-    RTTI_FUNCTION(SortArray);
-    RTTI_FUNCTION(Swap);
-});
 ```
 
 ```swift
-public static native func GetCharCode(text: String, opt pos: Int32) -> Int32
+public static native func GetCharCode(str: script_ref<String>, opt pos: Int32) -> Int32
+public static native func MakeRandomArray(n: Int32) -> array<Int32>
 public static native func SortArray(array: script_ref<array<Int32>>)
 public static native func Swap(a: Int32, b: Int32)
 ```
@@ -41,7 +49,7 @@ public static func TestGlobals() {
   LogChannel(n"DEBUG", StrChar(GetCharCode(s)));
   LogChannel(n"DEBUG", StrChar(GetCharCode(s, 3)));
 
-  let array = [78, 12, 63, 42];
+  let array = MakeRandomArray(5);
   SortArray(array);
   for item in array {
     LogChannel(n"DEBUG", ToString(item));
