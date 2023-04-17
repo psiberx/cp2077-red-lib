@@ -48,6 +48,12 @@ void Swap(int32_t* a, int32_t* b)
 {
     std::swap(*a, *b);
 }
+
+RTTI_DEFINE_GLOBALS({
+    RTTI_FUNCTION(MakeArray);
+    RTTI_FUNCTION(SortArray);
+    RTTI_FUNCTION(Swap);
+});
 ```
 
 ```swift
