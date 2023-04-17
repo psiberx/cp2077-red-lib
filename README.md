@@ -2,17 +2,31 @@
 
 Header-only library to help create [RED4ext](https://github.com/WopsS/RED4ext.SDK) plugins.
 
+## Integration
+
+### CMake
+
+```cmake
+add_compile_definitions(NOMINMAX)
+add_subdirectory(vendor/RedLib)
+target_link_libraries(Project PRIVATE RedLib)
+```
+
+```cpp
+#include <RedLib.hpp>
+```
+
+### Namespaces
+
+The namespace of the library `Red` is also an alias for `RED4ext`.
+You can use whichever one you prefer (for example, `RED4ext::IScriptable` vs `Red::IScriptable`).
+
 ## Building type info
 
 ### Global functions
 
 ```cpp
-int32_t GetCharCode(Red::ScriptRef<Red::CString>& str, Red::Optional<int32_t> pos)
-{
-    return pos >= 0 && pos < str->Length() ? str[pos] : -1;
-}
-
-Red::DynArray<int32_t> MakeRandomArray(int32_t n)
+Red::DynArray<int32_t> MakeArray(int32_t n)
 {
     Red::DynArray<int32_t> array;
     array.Reserve(n);
@@ -37,19 +51,14 @@ void Swap(int32_t* a, int32_t* b)
 ```
 
 ```swift
-public static native func GetCharCode(str: script_ref<String>, opt pos: Int32) -> Int32
-public static native func MakeRandomArray(n: Int32) -> array<Int32>
+public static native func MakeArray(n: Int32) -> array<Int32>
 public static native func SortArray(array: script_ref<array<Int32>>)
 public static native func Swap(a: Int32, b: Int32)
 ```
 
 ```swift
 public static func TestGlobals() {
-  let s = "ABCDEF";
-  LogChannel(n"DEBUG", StrChar(GetCharCode(s)));
-  LogChannel(n"DEBUG", StrChar(GetCharCode(s, 3)));
-
-  let array = MakeRandomArray(5);
+  let array = MakeArray(5);
   SortArray(array);
   for item in array {
     LogChannel(n"DEBUG", ToString(item));
@@ -144,14 +153,14 @@ public static func TestStruct() {
 #### IScriptables
 
 ```cpp
-struct MyClass : RED4ext::IScriptable
+struct MyClass : Red::IScriptable
 {
     void AddItem(MyEnum item)
     {
         items.EmplaceBack(item);
     }
     
-    void AddFrom(const RED4ext::Handle<MyClass>& other)
+    void AddFrom(const Red::Handle<MyClass>& other)
     {
         for (const auto& item : other->items)
         {
@@ -159,12 +168,12 @@ struct MyClass : RED4ext::IScriptable
         }
     }
     
-    inline static RED4ext::Handle<MyClass> Create()
+    inline static Red::Handle<MyClass> Create()
     {
-        return RED4ext::MakeHandle<MyClass>();
+        return Red::MakeHandle<MyClass>();
     }
 
-    RED4ext::DynArray<MyEnum> items;
+    Red::DynArray<MyEnum> items;
 
     RTTI_IMPL_TYPEINFO(MyClass);
     RTTI_IMPL_ALLOCATOR();
@@ -207,7 +216,7 @@ public static func TestClass() {
 #### Inheritance
 
 ```cpp
-struct ClassA : RED4ext::IScriptable
+struct ClassA : Red::IScriptable
 {
     RTTI_IMPL_TYPEINFO(ClassA);
 };
@@ -279,7 +288,7 @@ public class MySystem extends ScriptableSystem {
 When you define `IGameSystem` class, it will be automatically registered in game instance.
 
 ```cpp
-class MyGameSystem : public RED4ext::IGameSystem
+class MyGameSystem : public Red::IGameSystem
 {
 public:
     bool IsAttached() const
@@ -288,12 +297,12 @@ public:
     }
 
 private:
-    void OnWorldAttached(RED4ext::world::RuntimeScene* scene) override
+    void OnWorldAttached(Red::world::RuntimeScene* scene) override
     {
         attached = true;
     }
 
-    void OnWorldDetached(RED4ext::world::RuntimeScene* scene) override
+    void OnWorldDetached(Red::world::RuntimeScene* scene) override
     {
         attached = false;
     }
@@ -333,7 +342,7 @@ You can create scripted members backed by native code.
 In particular, it allows you to create scriptable systems.
 
 ```cpp
-struct MyScriptableSystem : RED4ext::ScriptableSystem
+struct MyScriptableSystem : Red::ScriptableSystem
 {
     void OnAttach()
     {
@@ -347,7 +356,7 @@ struct MyScriptableSystem : RED4ext::ScriptableSystem
 
     void OnRestored(int32_t saveVersion, int32_t gameVersion)
     {
-        Red::Log::Debug("Restored");
+        Red::Log::Debug("Restored save={} game={}", saveVersion, gameVersion);
     }
 
     RTTI_IMPL_TYPEINFO(MyScriptableSystem);
@@ -364,8 +373,7 @@ RTTI_DEFINE_CLASS(MyScriptableSystem, {
 #### Incomplete classes
 
 Using `RTTI_FWD_CONSTRUCTOR()` as in the previous example, 
-you can inherit partially dedcoded classes,
-and delegate construction and destruction to RTTI system. 
+you can inherit partially dedcoded classes and delegate construction and destruction to RTTI system. 
 
 ### Alternative naming
 
@@ -399,15 +407,15 @@ public native struct Foo {
 You can add methods to already defined classes.
 
 ```cpp
-struct MyExtension : RED4ext::GameObject
+struct MyExtension : Red::GameObject
 {
-    void AddTag(RED4ext::CName tag)
+    void AddTag(Red::CName tag)
     {
-        tags.tags.PushBack(tag);
+        tags.Add(tag);
     }
 };
 
-RTTI_EXPAND_CLASS(RED4ext::GameObject, {
+RTTI_EXPAND_CLASS(Red::GameObject, {
     RTTI_METHOD_FQN(MyExtension::AddTag);
 });
 ```
@@ -488,9 +496,9 @@ public static func TestRaw() {
 If you need access to stack frame, alternatively you can just add it as a param to a regular method:
 
 ```cpp
-struct RawExample : RED4ext::IScriptable
+struct RawExample : Red::IScriptable
 {
-    int32_t Add(int32_t a, int32_t b, RED4ext::CStackFrame* frame)
+    int32_t Add(int32_t a, int32_t b, Red::CStackFrame* frame)
     {
         if (frame->func)
         {
@@ -500,7 +508,7 @@ struct RawExample : RED4ext::IScriptable
         return a + b;
     }
     
-    RED4ext::CName caller;
+    Red::CName caller;
     
     RTTI_IMPL_TYPEINFO(RawExample);
 };
@@ -532,10 +540,10 @@ At compile time you can convert any C++ type to a corresponding RTTI type name:
 constexpr auto name = Red::GetTypeName<uint64_t>();
 
 // CName("String")
-constexpr auto name = Red::GetTypeName<RED4ext::CString>();
+constexpr auto name = Red::GetTypeName<Red::CString>();
 
 // CName("array:handle:MyClass")
-constexpr auto name = Red::GetTypeName<RED4ext::DynArray<RED4ext::Handle<MyClass>>>();
+constexpr auto name = Red::GetTypeName<Red::DynArray<Red::Handle<MyClass>>>();
 
 // std::array<char, 7> = "String\0"
 constexpr auto name = Red::GetTypeNameStr<RED4ext::CString>();
@@ -544,9 +552,9 @@ constexpr auto name = Red::GetTypeNameStr<RED4ext::CString>();
 At runtime you can get `CBaseRTTIType` and `CClass` based on C++ types:
 
 ```cpp
-auto stringType = Red::GetType<RED4ext::CString>();
-auto enumArrayType = Red::GetType<RED4ext::DynArray<MyEnum>>();
-auto entityClass = Red::GetClass<RED4ext::Entity>();
+auto stringType = Red::GetType<Red::CString>();
+auto enumArrayType = Red::GetType<Red::DynArray<MyEnum>>();
+auto entityClass = Red::GetClass<Red::Entity>();
 ```
 
 ## Calling functions
@@ -557,14 +565,14 @@ Red::CallGlobal("MaxF", max, a, b); // max = MaxF(a, b)
 ```
 
 ```cpp
-RED4ext::Vector4 vec{};
+Red::Vector4 vec{};
 Red::CallStatic("Vector4", "Rand", vec); // vec = Vector4.Rand()
 ```
 
 ```cpp
-RED4ext::ScriptGameInstance game;
-RED4ext::Handle<RED4ext::PlayerSystem> system;
-RED4ext::Handle<RED4ext::GameObject> player;
+Red::ScriptGameInstance game;
+Red::Handle<Red::PlayerSystem> system;
+Red::Handle<Red::GameObject> player;
 
 // system = GameInstance.GetPlayerSystem(game)
 Red::CallStatic("ScriptGameInstance", "GetPlayerSystem", system, game);
@@ -579,28 +587,16 @@ Red::CallVirtual(player, "Revive", 100.0f);
 ## Accessing game systems
 
 ```cpp
-auto system = Red::GetGameSystem<RED4ext::IPersistencySystem>();
+auto system = Red::GetGameSystem<Red::IPersistencySystem>();
 auto status = system->GetEntityStatus(1ULL);
 ```
 
 ## Printing to game log
 
 ```cpp
-const auto projectName = "MyProject";
+const auto projectName = "MyMod";
 
 Red::Log::Debug("Hello from {}", projectName);
-```
-
-## Integration
-
-```cmake
-add_compile_definitions(NOMINMAX)
-add_subdirectory(vendor/RedLib)
-target_link_libraries(Project PRIVATE RedLib)
-```
-
-```cpp
-#include <RedLib.hpp>
 ```
 
 ## Examples
