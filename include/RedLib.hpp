@@ -13,6 +13,8 @@
 
 #include <RED4ext/GameEngine.hpp>
 #include <RED4ext/RTTISystem.hpp>
+#include <RED4ext/ResourceLoader.hpp>
+#include <RED4ext/ResourceReference.hpp>
 #include <RED4ext/Scripting/Natives/ScriptGameInstance.hpp>
 #include <RED4ext/Scripting/Natives/Generated/game/IGameSystem.hpp>
 #include <RED4ext/Scripting/Natives/Generated/game/ScriptableSystem.hpp>
