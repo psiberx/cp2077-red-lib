@@ -225,16 +225,19 @@ public static func TestClass() {
 struct ClassA : Red::IScriptable
 {
     RTTI_IMPL_TYPEINFO(ClassA);
+    RTTI_IMPL_ALLOCATOR();
 };
 
 struct ClassB : ClassA
 {
     RTTI_IMPL_TYPEINFO(ClassB);
+    RTTI_IMPL_ALLOCATOR();
 };
 
 struct ClassC : ClassB
 {
     RTTI_IMPL_TYPEINFO(ClassC);
+    RTTI_IMPL_ALLOCATOR();
 };
 
 RTTI_DEFINE_CLASS(ClassA, "A", {
