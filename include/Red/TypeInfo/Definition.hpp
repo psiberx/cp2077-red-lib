@@ -662,7 +662,11 @@ class ClassDescriptorDefaultImpl : public ClassDescriptor<TClass>
         else
         {
             using func_t = bool (*)(CClass*, const ScriptInstance, const ScriptInstance, uint32_t);
-            RelocFunc<func_t> func(RED4ext::Addresses::TTypedClass_IsEqual);
+#ifdef RED4EXT_SDK_0_5_0
+            static UniversalRelocFunc<func_t> func(RED4ext::Detail::AddressHashes::TTypedClass_IsEqual);
+#else
+            static RelocFunc<func_t> func(RED4ext::Addresses::TTypedClass_IsEqual);
+#endif
             return func(this, aLhs, aRhs, a3);
         }
     }
@@ -936,7 +940,7 @@ struct SystemBuilder
     {
         constexpr auto systemRefStr = GetTypeNameStr<Handle<TSystem>>();
         constexpr auto systemTypeStr = GetTypeNameStr<TSystem>();
-        constexpr auto systemNameStr = Red::Detail::UpFirstConstStr<systemTypeStr.size()>(systemTypeStr.data());
+        constexpr auto systemNameStr = Detail::UpFirstConstStr<systemTypeStr.size()>(systemTypeStr.data());
         constexpr auto getterNameStr = Detail::ConcatConstStr<3, systemNameStr.size() - 1>("Get", systemNameStr.data());
 
         auto gameType = GetClass<ScriptGameInstance>();
