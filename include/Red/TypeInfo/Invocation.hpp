@@ -224,6 +224,10 @@ inline CBaseFunction* GetGlobalFunction(CName aName)
 {
     return CRTTISystem::Get()->GetFunction(aName);
 }
+
+inline bool HasGlobalFunction(CName aName) {
+    return CRTTISystem::Get()->GetFunction(aName) != nullptr;
+}
 }
 
 template<typename... Args>

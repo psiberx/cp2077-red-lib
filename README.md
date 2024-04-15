@@ -591,6 +591,15 @@ Red::CallVirtual(system, "GetLocalPlayerControlledGameObject", player);
 
 // player.Revive(100.0)
 Red::CallVirtual(player, "Revive", 100.0f);
+
+```
+
+Whether a class / global function is defined in RTTI system? 
+> It can be used to test if another mod is present or not, when it defines new 
+> classes / global functions.
+```cpp
+bool hasRedFileSystem = Red::HasClass("FileSystem");
+bool hasRedData = Red::Detail::HasGlobalFunction("ParseJson");
 ```
 
 ## Accessing game systems

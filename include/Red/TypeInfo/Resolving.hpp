@@ -415,6 +415,12 @@ inline CClass* GetClass(CName aTypeName)
     return reinterpret_cast<CClass*>(type);
 }
 
+inline bool HasClass(CName aTypeName) {
+    auto type = CRTTISystem::Get()->GetType(aTypeName);
+
+    return type && type->GetType() == ERTTIType::Class;
+}
+
 template<CName AType>
 inline CEnum* GetEnum() noexcept
 {
