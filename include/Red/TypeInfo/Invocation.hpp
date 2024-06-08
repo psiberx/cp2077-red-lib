@@ -167,7 +167,7 @@ inline CBaseFunction* GetFunction(CClass* aType, CName aName, bool aMember = tru
 {
     if (aType)
     {
-        if (aMember)
+        if (aMember || Detail::IsFakeStatic(aType->name))
         {
             for (auto func : aType->funcs)
             {
@@ -187,11 +187,6 @@ inline CBaseFunction* GetFunction(CClass* aType, CName aName, bool aMember = tru
                     return func;
                 }
             }
-
-            if (Detail::IsFakeStatic(aType->name))
-            {
-                return GetFunction(aType, aName);
-            }
         }
 
         if (aType->parent)
@@ -206,6 +201,11 @@ inline CBaseFunction* GetFunction(CClass* aType, CName aName, bool aMember = tru
 inline CBaseFunction* GetFunction(CName aType, CName aName, bool aMember = true, bool aStatic = true)
 {
     return GetFunction(GetClass(aType), aName, aMember, aStatic);
+}
+
+inline CBaseFunction* GetFunction(CName aName)
+{
+    return CRTTISystem::Get()->GetFunction(aName);
 }
 
 inline CBaseFunction* GetMemberFunction(CClass* aType, CName aName)
@@ -228,9 +228,9 @@ inline CBaseFunction* GetStaticFunction(CName aType, CName aName)
     return GetFunction(GetClass(aType), aName, false, true);
 }
 
-inline CBaseFunction* GetFunction(CName aName)
+inline CBaseFunction* GetGlobalFunction(CName aName)
 {
-    return CRTTISystem::Get()->GetFunction(aName);
+    return GetFunction(aName);
 }
 
 inline bool CallFunction(Red::CStackFrame* aFrame, CBaseFunction* aFunc, CStack& aStack)
