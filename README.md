@@ -593,6 +593,21 @@ Red::CallVirtual(system, "GetLocalPlayerControlledGameObject", player);
 Red::CallVirtual(player, "Revive", 100.0f);
 ```
 
+## Accessing properties
+```cpp
+Red::Handle<Red::vehicle::BaseObject> vehicle;
+
+// isAbandoned = vehicle.abandoned;
+auto isAbandoned = Red::GetProperty<bool>(vehicle, "abandoned");
+```
+
+```cpp
+Red::Handle<Red::GameObject> player;
+
+// itemLogBB = player.itemLogBlackboard;
+auto itemLogBB = Red::GetProperty<Red::WeakHandle<Red::IBlackboard>>(player, "itemLogBlackboard");
+```
+
 ## Accessing game systems
 
 ```cpp
