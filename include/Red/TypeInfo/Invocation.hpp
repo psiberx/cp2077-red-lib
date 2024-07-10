@@ -284,4 +284,11 @@ inline bool CallGlobal(CName aFunc, Args&&... aArgs)
 {
     return Detail::CallFunctionWithArgs(nullptr, GetFunction(aFunc), nullptr, std::forward<Args>(aArgs)...);
 }
+
+template<typename T>
+inline T GetProperty(IScriptable* aContext, CName aProp) {
+    CProperty* property = aContext->GetType()->GetProperty(aProp);
+
+    return property->GetValue<T>(aContext);
+}
 }
