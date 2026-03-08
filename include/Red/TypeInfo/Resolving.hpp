@@ -217,6 +217,12 @@ consteval CName GetTypeName()
     return GetTypeNameStr<T>().data();
 }
 
+template<typename T>
+consteval uint64_t GetTypeHash()
+{
+    return FNV1a64(GetTypeNameStr<T>().data());
+}
+
 template<CName AType>
 class TypeLocator
 {
