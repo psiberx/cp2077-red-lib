@@ -11,7 +11,6 @@
 #include <utility>
 #include <vector>
 
-#include <RED4ext/Api/Version.hpp>
 #include <RED4ext/Common.hpp>
 #include <RED4ext/GameEngine.hpp>
 #include <RED4ext/RTTISystem.hpp>
@@ -24,6 +23,12 @@
 #include <RED4ext/Scripting/Natives/ScriptGameInstance.hpp>
 #include <RED4ext/Scripting/OpcodeHandlers.hpp>
 #include <RED4ext/Scripting/Stack.hpp>
+
+#ifdef RED4EXT_OFFSET_TO_ADDR
+#include <RED4ext/Api/v1/Version.hpp>
+#else
+#include <RED4ext/Api/Version.hpp>
+#endif
 
 #include <nameof/nameof.hpp>
 
