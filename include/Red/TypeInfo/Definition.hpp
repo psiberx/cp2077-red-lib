@@ -390,7 +390,7 @@ inline RawBuffer MakeScriptForwardCode(CBaseFunction* aFunc)
     constexpr uint32_t BaseCodeSize = OpSize + OffsetSize * 2 + PointerSize + FlagsSize + OpSize;
     constexpr uint16_t BaseExitOffset = BaseCodeSize - OpSize - OffsetSize;
 
-    const uint32_t extraCodeSize = aFunc->params.size * (OpSize + PointerSize) + (aFunc->returnType ? 1 : 0);
+    const uint32_t extraCodeSize = aFunc->params.Size() * (OpSize + PointerSize) + (aFunc->returnType ? 1 : 0);
     const uint32_t finalCodeSize = BaseCodeSize + extraCodeSize;
     const uint16_t finalExitOffset = BaseExitOffset + extraCodeSize;
 
