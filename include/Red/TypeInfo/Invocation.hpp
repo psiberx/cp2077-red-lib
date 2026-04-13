@@ -125,7 +125,7 @@ inline bool CallFunctionWithArgs(Red::CStackFrame* aFrame, CBaseFunction* aFunc,
                 return false;
             }
 
-            if (aFunc->params.Size())
+            if (!aFunc->params.IsEmpty())
             {
                 stack.args = args.data() + 1;
             }
@@ -135,7 +135,7 @@ inline bool CallFunctionWithArgs(Red::CStackFrame* aFrame, CBaseFunction* aFunc,
             stack.args = args.data();
         }
 
-        if (aFunc->params.Size())
+        if (!aFunc->params.IsEmpty())
         {
             stack.argsCount = aFunc->params.Size();
 
