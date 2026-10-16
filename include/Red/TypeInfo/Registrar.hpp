@@ -19,14 +19,6 @@ public:
         QueuePendingDescribeCallbacks();
     }
 
-    // For hosts where the game does not run the RTTI register callbacks by itself (the macOS game): the plugin
-    // calls this once the RTTI system is ready, and again whenever a describe callback re-queued itself.
-    static inline void RunPending()
-    {
-        ProcessPendingRegisterCallbacks();
-        ProcessPendingDescriberCallbacks();
-    }
-
     static inline void AddRegisterCallback(Callback aRegister)
     {
         if (aRegister)
