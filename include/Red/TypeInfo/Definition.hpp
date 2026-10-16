@@ -667,7 +667,12 @@ public:
 template<typename TClass>
 class ClassDescriptorDefaultImpl : public ClassDescriptor<TClass>
 {
+#if defined(__APPLE__)
+    // The macOS SDK declares the base as returning bool; clang rejects a const-qualified override of it.
+    bool IsEqual(const void* aLhs, const void* aRhs, uint32_t a3) final // 48
+#else
     const bool IsEqual(const void* aLhs, const void* aRhs, uint32_t a3) final // 48
+#endif
     {
         if constexpr (Detail::IsConstructionForwarded<TClass>)
         {
