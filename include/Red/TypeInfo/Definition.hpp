@@ -1005,8 +1005,7 @@ struct SystemBuilder
 
         gameInstance->systemMap.Insert(systemType, systemInstance);
         gameInstance->systemImplementations.Insert(systemType, systemType);
-        // Clang finds Handle<Derived> -> Handle<IScriptable> ambiguous, so the conversion is spelled out.
-        gameInstance->systemInstances.EmplaceBack(static_cast<Handle<IScriptable>&>(systemInstance));
+        gameInstance->systemInstances.EmplaceBack(systemInstance);
     }
 
     static inline Handle<TSystem> BuildSystem()
