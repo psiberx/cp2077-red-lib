@@ -104,8 +104,6 @@ consteval auto RemoveMemberPrefix(std::string_view aName)
     return aName;
 }
 
-// MSVC spells a full enum type name as "enum RED4ext::game::X". Clang drops the keyword ("RED4ext::game::X"), so there
-// the prefix alone does not tell an enum from a class and the type is checked as well.
 #if defined(__clang__)
 constexpr auto ScopedEnumPrefix = "RED4ext::";
 #else
