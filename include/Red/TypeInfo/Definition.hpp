@@ -939,6 +939,14 @@ struct SystemBuilder
     static inline void ScriptGetter(Red::IScriptable* aContext, Red::CStackFrame* aFrame,
                                     Red::Handle<Red::IScriptable>* aRet, int64_t)
     {
+        constexpr uint8_t ParamEndOp = 38;
+
+        if (*aFrame->code != ParamEndOp)
+        {
+            ScriptGameInstance gameInstance;
+            Red::GetParameter(aFrame, &gameInstance);
+        }
+
         ++aFrame->code;
 
         if (aRet)
