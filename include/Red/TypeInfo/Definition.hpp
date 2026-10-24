@@ -509,11 +509,8 @@ public:
         if (name != aAlias)
         {
             auto rtti = CRTTISystem::Get();
-            if (rtti->scriptToNative.Get(aAlias) == nullptr)
-            {
-                rtti->scriptToNative.Insert(aAlias, name);
-                rtti->nativeToScript.Insert(name, aAlias);
-            }
+            rtti->scriptToNative.InsertOrAssign(aAlias, name);
+            rtti->nativeToScript.InsertOrAssign(name, aAlias);
         }
     }
 
@@ -530,19 +527,22 @@ public:
     {
         auto* ptr = reinterpret_cast<ScriptingFunction_t<TRet*>>(aFunc);
 
-        CClassFunction* func;
         if constexpr (std::is_same_v<TContext, IScriptable>)
         {
-            func = CClassStaticFunction::Create(this, aName, aName, ptr, aFlags);
+            auto func = CClassStaticFunction::Create(this, aName, aName, ptr, aFlags);
+
+            RegisterFunction(func);
+
+            return func;
         }
         else
         {
-            func = CClassFunction::Create(this, aName, aName, ptr, aFlags);
+            auto func = CClassFunction::Create(this, aName, aName, ptr, aFlags);
+
+            RegisterFunction(func);
+
+            return func;
         }
-
-        RegisterFunction(func);
-
-        return func;
     }
 
     template<auto AFunction>
@@ -661,6 +661,48 @@ public:
         RegisterFunction(func);
 
         return func;
+    }
+
+    void RegisterFunction(CClassFunction* aFunc)
+    {
+        if (aFunc->flags.isStatic)
+        {
+            auto functionExists = false;
+
+            for (auto& existingFunc : staticFuncs)
+            {
+                if (existingFunc->shortName == aFunc->shortName)
+                {
+                    existingFunc = static_cast<CClassStaticFunction*>(aFunc);
+                    functionExists = true;
+                    break;
+                }
+            }
+
+            if (!functionExists)
+            {
+                staticFuncs.PushBack(static_cast<CClassStaticFunction*>(aFunc));
+            }
+        }
+        else
+        {
+            auto functionExists = false;
+
+            for (auto& existingFunc : funcs)
+            {
+                if (existingFunc->shortName == aFunc->shortName)
+                {
+                    existingFunc = aFunc;
+                    functionExists = true;
+                    break;
+                }
+            }
+
+            if (!functionExists)
+            {
+                funcs.PushBack(aFunc);
+            }
+        }
     }
 };
 
@@ -977,12 +1019,28 @@ struct SystemBuilder
         constexpr auto systemTypeStr = GetTypeNameStr<TSystem>();
         constexpr auto systemNameStr = Detail::UpFirstConstStr<systemTypeStr.size()>(systemTypeStr.data());
         constexpr auto getterNameStr = Detail::ConcatConstStr<3, systemNameStr.size() - 1>("Get", systemNameStr.data());
+        constexpr auto getterName = Red::CName(getterNameStr.data());
 
         auto gameType = GetClass<ScriptGameInstance>();
         auto getterFunc = CClassStaticFunction::Create(gameType, getterNameStr.data(), getterNameStr.data(), &ScriptGetter);
         getterFunc->SetReturnType(CNamePool::Add(systemRefStr.data()));
 
-        gameType->staticFuncs.PushBack(getterFunc);
+        auto getterExists = false;
+
+        for (auto& existingFunc : gameType->staticFuncs)
+        {
+            if (existingFunc->shortName == getterFunc->shortName)
+            {
+                existingFunc = getterFunc;
+                getterExists = true;
+                break;
+            }
+        }
+
+        if (!getterExists)
+        {
+            gameType->staticFuncs.PushBack(getterFunc);
+        }
     }
 
     static inline void RegisterSystem()
@@ -1105,6 +1163,12 @@ struct ClassDefinition
         {
             SystemBuilder<TClass>::RegisterGetter();
             SystemBuilder<TClass>::RegisterSystem();
+        }
+
+        if (auto alias = rtti->GetClassByScriptName(name))
+        {
+            rtti->scriptToNative.InsertOrAssign(name, name);
+            rtti->nativeToScript.InsertOrAssign(name, name);
         }
     }
 
