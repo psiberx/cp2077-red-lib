@@ -981,7 +981,7 @@ struct SystemBuilder
     {
         auto engine = CGameEngine::Get();
 
-        if (!engine || !engine->framework)
+        if (!engine || !engine->framework || !engine->framework->gameInstance || !TypeInfoRegistrar::IsMainThread())
         {
             TypeInfoRegistrar::AddDescribeCallback(&RegisterSystem);
             return;
